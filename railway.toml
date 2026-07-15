@@ -1,2 +1,1 @@
-[deploy]
-startCommand = "gunicorn app:app"
+Set-Content railway.toml "[deploy]`nstartCommand = `"gunicorn app:app`"`n"
