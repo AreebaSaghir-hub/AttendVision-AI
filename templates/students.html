@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Students — AttendVision AI{% endblock %}
+{% block page_title %}Student Registry{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <h3>👥 Enrolled Students ({{ students|length }})</h3>
+    <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">➕ Add Student</a>
+  </div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Student ID</th>
+          <th>Department</th>
+          <th>Email</th>
+          <th>Face Enrolled</th>
+          <th>Registered</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in students %}
+        <tr id="row-{{ s.student_id }}">
+          <td>{{ loop.index }}</td>
+          <td><strong>{{ s.name }}</strong></td>
+          <td><code>{{ s.student_id }}</code></td>
+          <td>{{ s.department or '—' }}</td>
+          <td>{{ s.email or '—' }}</td>
+          <td>
+            {% if s.face_encoding %}
+              <span class="badge badge-green">✅ Yes</span>
+            {% else %}
+              <span class="badge badge-red">❌ No</span>
+            {% endif %}
+          </td>
+          <td>{{ s.registered_at[:10] if s.registered_at else '—' }}</td>
+          <td>
+            <button class="btn btn-danger btn-sm" onclick="deleteStudent('{{ s.student_id }}', '{{ s.name }}')">
+              🗑 Delete
+            </button>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="8" style="text-align:center;color:var(--text-muted);padding:32px">
+            No students registered yet. <a href="{{ url_for('register') }}">Add one →</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function deleteStudent(id, name) {
+  if (!confirm(`Delete ${name} and all their attendance records?`)) return;
+  fetch(`/api/delete_student/${id}`, { method: 'DELETE' })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) document.getElementById(`row-${id}`).remove();
+    });
+}
+</script>
+{% endblock %}

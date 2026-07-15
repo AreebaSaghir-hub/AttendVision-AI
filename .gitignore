@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.Python
+env/
+venv/
+.venv/
+
+# Database (generated at runtime — don't commit)
+database/attendance.db
+
+# User-uploaded real faces (privacy — don't commit real photos)
+# Demo STU00*.jpg are intentionally tracked (generated avatars, not real people)
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp

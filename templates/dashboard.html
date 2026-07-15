@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — AttendVision AI{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card accent-blue">
+    <div class="stat-icon">👥</div>
+    <div class="stat-body">
+      <div class="stat-num">{{ stats.total_students }}</div>
+      <div class="stat-label">Total Students</div>
+    </div>
+  </div>
+  <div class="stat-card accent-green">
+    <div class="stat-icon">✅</div>
+    <div class="stat-body">
+      <div class="stat-num">{{ stats.today_present }}</div>
+      <div class="stat-label">Present Today</div>
+    </div>
+  </div>
+  <div class="stat-card accent-purple">
+    <div class="stat-icon">📋</div>
+    <div class="stat-body">
+      <div class="stat-num">{{ stats.total_records }}</div>
+      <div class="stat-label">Total Records</div>
+    </div>
+  </div>
+  <div class="stat-card accent-orange">
+    <div class="stat-icon">🧠</div>
+    <div class="stat-body">
+      <div class="stat-num">{{ stats.registered_faces }}</div>
+      <div class="stat-label">Faces Enrolled</div>
+    </div>
+  </div>
+</div>
+
+<div class="grid-2col">
+  <div class="card">
+    <div class="card-header">
+      <h3>📈 Attendance — Last 14 Days</h3>
+    </div>
+    <canvas id="attendanceChart" height="200"></canvas>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3>🕐 Recent Activity</h3>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Name</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for r in recent %}
+          <tr>
+            <td><strong>{{ r.student_name }}</strong></td>
+            <td>{{ r.date }}</td>
+            <td>{{ r.time }}</td>
+            <td><span class="badge badge-green">{{ r.status }}</span></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px">No records yet</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:24px">
+  <div class="card-header">
+    <h3>⚡ Quick Actions</h3>
+  </div>
+  <div class="quick-actions">
+    <a href="{{ url_for('live') }}" class="qa-btn qa-primary">📹 Start Live Recognition</a>
+    <a href="{{ url_for('register') }}" class="qa-btn qa-secondary">➕ Register New Student</a>
+    <a href="{{ url_for('attendance') }}" class="qa-btn qa-secondary">📋 View Attendance Log</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+fetch('/api/attendance_chart')
+  .then(r => r.json())
+  .then(data => {
+    new Chart(document.getElementById('attendanceChart'), {
+      type: 'line',
+      data: {
+        labels: data.dates,
+        datasets: [{
+          label: 'Students Present',
+          data: data.counts,
+          borderColor: '#63b3ed',
+          backgroundColor: 'rgba(99,179,237,0.1)',
+          borderWidth: 2,
+          pointBackgroundColor: '#63b3ed',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, ticks: { color: '#a0aec0', stepSize: 1 }, grid: { color: '#2d3748' } },
+          x: { ticks: { color: '#a0aec0' }, grid: { color: '#2d3748' } }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

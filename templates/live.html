@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}Live Recognition — AttendVision AI{% endblock %}
+{% block page_title %}Live Face Recognition{% endblock %}
+
+{% block content %}
+<div class="grid-2col">
+  <div class="card">
+    <div class="card-header">
+      <h3>📹 Camera Feed</h3>
+      <div class="status-pill" id="statusPill">
+        <span class="dot {% if recognition_active %}dot-green{% else %}dot-red{% endif %}"></span>
+        <span id="statusText">{% if recognition_active %}Active{% else %}Inactive{% endif %}</span>
+      </div>
+    </div>
+    <div class="camera-wrap">
+      <img id="videoFeed" src="{{ url_for('video_feed') }}" style="display:{% if recognition_active %}block{% else %}none{% endif %}; width:100%;border-radius:8px;">
+      <div id="cameraPlaceholder" style="display:{% if recognition_active %}none{% else %}flex{% endif %};" class="cam-placeholder">
+        <div>
+          <div style="font-size:4rem">📷</div>
+          <p>Recognition is paused</p>
+          <small>Click Start to begin</small>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:12px">
+      <button id="toggleBtn" class="btn {% if recognition_active %}btn-danger{% else %}btn-primary{% endif %}" onclick="toggleRecognition()">
+        {% if recognition_active %}⏹ Stop Recognition{% else %}▶ Start Recognition{% endif %}
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3>🧠 Recognition Info</h3>
+    </div>
+    <div class="info-list">
+      <div class="info-row">
+        <span class="info-label">Engine</span>
+        <span class="info-val">face_recognition (dlib)</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Detection Model</span>
+        <span class="info-val">HOG + CNN</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Tolerance</span>
+        <span class="info-val">0.50</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Frame Skip</span>
+        <span class="info-val">Every 3rd frame</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Resolution</span>
+        <span class="info-val">640 × 480</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Debounce</span>
+        <span class="info-val">60 seconds</span>
+      </div>
+    </div>
+
+    <div style="margin-top:24px">
+      <h4 style="margin-bottom:12px;color:var(--text-muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em">Legend</h4>
+      <div class="legend-item"><span class="legend-box" style="background:#00c800"></span> Attendance Marked</div>
+      <div class="legend-item"><span class="legend-box" style="background:#c8c800"></span> Already Marked (debounce)</div>
+      <div class="legend-item"><span class="legend-box" style="background:#dc0000"></span> Unknown Face</div>
+    </div>
+
+    <div id="lastMarked" style="margin-top:24px;display:none;">
+      <div class="alert-success">
+        <strong>✅ Just Marked:</strong> <span id="markedName"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:24px">
+  <div class="card-header"><h3>📋 Today's Attendance</h3></div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Name</th><th>Student ID</th><th>Time</th><th>Method</th></tr></thead>
+      <tbody id="todayTable">
+        <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px">Start recognition to see live updates</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let active = {{ 'true' if recognition_active else 'false' }};
+
+function toggleRecognition() {
+  fetch('/api/toggle_recognition', { method: 'POST' })
+    .then(r => r.json())
+    .then(data => {
+      active = data.active;
+      const btn = document.getElementById('toggleBtn');
+      const feed = document.getElementById('videoFeed');
+      const placeholder = document.getElementById('cameraPlaceholder');
+      const dot = document.querySelector('.dot');
+      document.getElementById('statusText').textContent = active ? 'Active' : 'Inactive';
+
+      if (active) {
+        btn.textContent = '⏹ Stop Recognition';
+        btn.className = 'btn btn-danger';
+        feed.src = '/video_feed?' + Date.now();
+        feed.style.display = 'block';
+        placeholder.style.display = 'none';
+        dot.className = 'dot dot-green';
+        fetchTodayAttendance();
+      } else {
+        btn.textContent = '▶ Start Recognition';
+        btn.className = 'btn btn-primary';
+        feed.style.display = 'none';
+        placeholder.style.display = 'flex';
+        dot.className = 'dot dot-red';
+      }
+    });
+}
+
+function fetchTodayAttendance() {
+  if (!active) return;
+  fetch('/attendance?date=' + new Date().toISOString().split('T')[0])
+    .then(r => r.text())
+    .then(html => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      // We reload the page instead for simplicity
+    });
+  // Simpler: just reload table every 5s via separate API
+  setTimeout(fetchTodayAttendance, 5000);
+}
+</script>
+{% endblock %}

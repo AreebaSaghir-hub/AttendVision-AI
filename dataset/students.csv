@@ -1,0 +1,9 @@
+student_id,name,email,department,registered_at
+STU001,Ahmed Khan,ahmed.khan@university.edu,Computer Science,2025-10-01 09:00:00
+STU002,Sara Malik,sara.malik@university.edu,Computer Science,2025-10-01 09:05:00
+STU003,Bilal Hassan,bilal.hassan@university.edu,Electrical Engineering,2025-10-01 09:10:00
+STU004,Ayesha Siddiqui,ayesha.siddiqui@university.edu,Electrical Engineering,2025-10-01 09:15:00
+STU005,Omar Farooq,omar.farooq@university.edu,Mechanical Engineering,2025-10-01 09:20:00
+STU006,Zara Ahmed,zara.ahmed@university.edu,Business Administration,2025-10-01 09:25:00
+STU007,Usman Ali,usman.ali@university.edu,Mathematics,2025-10-01 09:30:00
+STU008,Fatima Noor,fatima.noor@university.edu,Computer Science,2025-10-01 09:35:00

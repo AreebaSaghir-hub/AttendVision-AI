@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AttendVision AI — Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    body { display:flex; align-items:center; justify-content:center; min-height:100vh; background:var(--bg); }
+    .login-card {
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:48px 40px;
+      width:380px;
+      box-shadow:0 20px 60px rgba(0,0,0,.4);
+    }
+    .login-logo { text-align:center; margin-bottom:32px; }
+    .login-logo .icon { font-size:48px; }
+    .login-logo h1 { font-size:1.5rem; font-weight:700; margin:8px 0 4px; color:var(--text); }
+    .login-logo p { color:var(--text-muted); font-size:.875rem; }
+    .form-group { margin-bottom:18px; }
+    .form-group label { display:block; font-size:.8rem; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px; }
+    .form-group input {
+      width:100%; padding:12px 14px; border:1px solid var(--border);
+      border-radius:8px; background:var(--bg); color:var(--text);
+      font-size:.95rem; outline:none; transition:border-color .2s;
+      box-sizing:border-box;
+    }
+    .form-group input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(99,179,237,.15); }
+    .btn-login {
+      width:100%; padding:13px; background:var(--accent); color:#fff;
+      border:none; border-radius:8px; font-size:1rem; font-weight:600;
+      cursor:pointer; transition:background .2s;
+    }
+    .btn-login:hover { background:var(--accent-hover); }
+    .error-msg { background:#4a1919; color:#fc8181; border:1px solid #742a2a; border-radius:8px; padding:10px 14px; margin-bottom:16px; font-size:.875rem; }
+    .hint { text-align:center; margin-top:20px; color:var(--text-muted); font-size:.8rem; }
+    .hint code { background:var(--bg); padding:2px 6px; border-radius:4px; font-family:monospace; color:var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="icon">👁️</div>
+      <h1>AttendVision AI</h1>
+      <p>Face Recognition Attendance System</p>
+    </div>
+    {% if error %}<div class="error-msg">⚠️ {{ error }}</div>{% endif %}
+    <form method="POST">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" name="username" placeholder="Enter username" autofocus>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Enter password">
+      </div>
+      <button type="submit" class="btn-login">Sign In →</button>
+    </form>
+    <p class="hint">Demo: <code>admin</code> / <code>admin123</code></p>
+  </div>
+</body>
+</html>
