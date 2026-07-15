@@ -70,4 +70,4 @@ git push -u origin main
 
 ## 👨‍💻 Author
 
-Talha — MSc CS Student @ TU Ilmenau
+Areeba Saghir — CS Student @ PUCIT
