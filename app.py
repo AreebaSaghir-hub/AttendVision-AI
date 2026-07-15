@@ -421,10 +421,11 @@ def retrain():
     return jsonify({"success": True, "trained": count})
 
 
-# Initialize for both gunicorn and direct run
-init_db()
-train_recognizer()
-load_model()
+# Initialize on startup
+with app.app_context():
+    init_db()
+    train_recognizer()
+    load_model()
 
 if __name__ == "__main__":
     print("\n" + "="*50)
